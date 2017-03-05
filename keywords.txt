@@ -1,0 +1,39 @@
+#######################################
+# Syntax Coloring Map LTC5800
+#######################################
+
+#######################################
+# Library (KEYWORD1)
+#######################################
+
+dustMote	     KEYWORD1
+dustManager	     KEYWORD1
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+IpMgDataModel	     KEYWORD1
+dn_ipmg_getMoteConfig_rpt	     KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin	        KEYWORD2
+readData	        KEYWORD2
+sendData	        KEYWORD2
+registerMote	        KEYWORD2
+listOfPath	        KEYWORD2
+listOfMac	        KEYWORD2
+getLastMessage	        KEYWORD2
+getDestinationMac	        KEYWORD2
+fetchLastMessage	        KEYWORD2
+dataToSend	        KEYWORD2
+setPriority	        KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+DN_EVENTID_EVENTMOTEOPERATIONAL	 LITERAL1	Constants	RESERVED_WORD_2
+DN_EVENTID_EVENTMOTELOST	 LITERAL1	Constants	RESERVED_WORD_2
+
