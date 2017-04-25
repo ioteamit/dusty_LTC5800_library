@@ -26,7 +26,7 @@
 #ifndef COMMON_HELPER_H
 #define COMMON_HELPER_H
 
-#include "sm_clib\dn_uart.h"
+#include "sm_clib/dn_uart.h"
 #include "variant.h"
 
 #ifdef __cplusplus

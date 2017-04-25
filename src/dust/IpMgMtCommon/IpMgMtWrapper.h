@@ -30,7 +30,7 @@
 #include "commonHelper.h"
 #include "Arduino.h"
 #include "commonDefines.h"
-#include "..\dataModel\DataModel.h"
+#include "../dataModel/DataModel.h"
 
 
 #if defined (DUST_DEBUG) |  defined(DEBUG_ON_AIR)

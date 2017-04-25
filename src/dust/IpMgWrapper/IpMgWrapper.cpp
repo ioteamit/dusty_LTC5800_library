@@ -16,9 +16,9 @@ This library will:
 
 #include "Arduino.h"
 #include "IpMgWrapper.h"
-#include "sm_clib\dn_serial_mg.h"
+#include "sm_clib/dn_serial_mg.h"
 #include "IpMgDefines.h"
-#include "..\..\DustManager.h"
+#include "../../DustManager.h"
 
 //=========================== define ==========================================
 #define CMD_PERIOD                0          // number of ms between two commands being sent

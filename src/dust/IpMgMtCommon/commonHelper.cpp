@@ -26,8 +26,8 @@
 #include "commonHelper.h"
 #include "IpMgMtWrapper.h"
 #include "commonDefines.h"
-#include "..\IpMtWrapper\IpMtDefines.h"
-#include "..\IpMgWrapper\IpMgDefines.h"
+#include "../IpMtWrapper/IpMtDefines.h"
+#include "../IpMgWrapper/IpMgDefines.h"
 
 //=========================== port to Arduino =================================
 

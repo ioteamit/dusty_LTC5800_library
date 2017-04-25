@@ -24,9 +24,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 #include "IpMgMtWrapper.h"
-#include "..\IpMgWrapper\IpMgWrapper.h"
-#include "..\IpMgWrapper\IpMgDefines.h"
-#include "..\IpMtWrapper\IpMtDefines.h"
+#include "../IpMgWrapper/IpMgWrapper.h"
+#include "../IpMgWrapper/IpMgDefines.h"
+#include "../IpMtWrapper/IpMtDefines.h"
 
 mg_mt_app_vars_t    app_vars;
 

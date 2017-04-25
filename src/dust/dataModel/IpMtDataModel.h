@@ -27,7 +27,7 @@
 #define IP_MT_DATAMODEL_H
 
 #include "DataModel.h"
-#include "sm_clib\dn_ipmt.h"
+#include "sm_clib/dn_ipmt.h"
 class IpMtDataModel: public DataModel {
 
 private:
