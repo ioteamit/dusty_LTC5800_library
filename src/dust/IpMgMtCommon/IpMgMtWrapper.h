@@ -92,7 +92,7 @@ public:
 
 public:    
     //=== helpers
-    inline const uint8_t* getLastReply(){return app_vars.replyBuf;};
+    inline const uint8_t* getLastCommand(){return app_vars.replyBuf;};
     static inline Uart*   getInternalSerial(){return IpMgMtWrapper::dustSerial;};
     inline void           setMgStatus(DustCbStatusE newStatus) {app_vars.cbStatus = newStatus;};
 

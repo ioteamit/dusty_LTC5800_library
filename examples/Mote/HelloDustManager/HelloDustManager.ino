@@ -6,10 +6,10 @@
  *  
  * 
  * created 08 07 2016
- *     by Mik (smkk@axelelettronica.it)
- *     
- *  This example is in the public domain
- *      https://github.com/ameltech
+      by Mik (mik@ioteam.it)
+
+   This example is in the public domain
+       https://bitbucket.org/ioteamit/arduino-dust-library
  */
 
 #include <Arduino.h>

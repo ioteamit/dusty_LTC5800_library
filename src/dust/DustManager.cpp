@@ -31,22 +31,6 @@ boolean DustManager::begin (bool eventNotification, eventCallBack eventFunct,
 		char CtsPin, Uart *serial)
 {
     
-#if defined (DUST_DEBUG)
-    #ifdef MKR_SAMD_LINEAR
-    if (serialAntenna == *serial) {
-        SerialPrint("Serial of ");
-        SerialPrintln("MKR_SAMD_LINEAR");
-    } else   
-    #endif
-     if (Serial1 == *serial) {
-        SerialPrint("Serial of ");
-        SerialPrintln("Serial1");
-    }  
-    else if (Serial == *serial) {
-        SerialPrint("Serial of ");
-        SerialPrintln("Serial1");
-    }
-#endif 
 	if (eventNotification && eventFunct == NULL) {
 		SerialPrint("\n\nWARNING: You set the request to have notification without add a callback to handle it.\n\n");
 		SerialPrintln();
@@ -90,15 +74,15 @@ boolean DustManager::registerMote(IpMgDataModel *mote){
 
 boolean DustManager::listOfMac(boolean start) {
 	if (start)
-		ipmgwrapper.resetCurrentMac();
+		ipmgwrapper.resetCurrentMac(); 
 
 	ipmgwrapper.api_getNextMoteConfig();
 }
 
-void DustManager::listOfPath(char mac[8], boolean start) {
-	if (start)
-		ipmgwrapper.resetCurrentPathId(mac);
-
+void DustManager::listOfPath(char mac[8], char pathFilter) {
+	
+	// set the strt mac
+	ipmgwrapper.resetCurrentPathId(mac, pathFilter);
 	ipmgwrapper.api_getNextPathInfo();
 }
 
@@ -198,7 +182,7 @@ void DustManager::retrieveManagerIp(void)
 
 
 
-void DustManager::changeNetworkId(const dn_ipmg_getNetworkConfig_rpt *netMsg, bool wholeNet)
+void DustManager::changeNetworkConfig(const dn_ipmg_getNetworkConfig_rpt *netMsg)
 {
-	ipmgwrapper.api_changeNetworkId(netMsg, wholeNet);
+	ipmgwrapper.api_changeNetworkConfig(netMsg);
 }

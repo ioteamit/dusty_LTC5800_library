@@ -36,6 +36,8 @@
 #include "dust/IpMgWrapper/IpMgWrapper.h"
 #include "DustDefines.h"
 
+#define ALL_PATH 0
+#define UPSTREAM_PATH 1
 
 // external variable used by the sketches
 extern IpMgWrapper  ipmgwrapper;
@@ -59,6 +61,9 @@ public:
 #ifdef MKR_SAMD_LINEAR
 	boolean begin (bool eventNotification=false, eventCallBack eventFunct=NULL,
 			char CtsPin = PIN_ANTENNA_CTS, Uart *serial=&serialAntenna);
+#elif ARDUINO_SAMD_SMARTEVERYTHING_DRAGONFLY
+boolean begin (bool eventNotification=false, eventCallBack eventFunct=NULL,
+			  char CtsPin = PIN_DUST_CTS, Uart *serial=&SerialDust); // the CtsPin in Dragonfly is keep high by Hw
 #else
 	boolean begin (bool eventNotification=false, eventCallBack eventFunct=NULL,
 			char CtsPin = PIN_LED, Uart *serial=&Serial1); //by default use one common Arduino PIN
@@ -66,8 +71,8 @@ public:
 	DustCbStatusE readData (void);
 	boolean sendData(DataModel *sendData=NULL);
 	boolean listOfMac(boolean start=TRUE);
-	void listOfPath(char mac[8], boolean start=TRUE);
-	inline const uint8_t* getLastCommand(){return ipmgwrapper.getLastReply();};
+	void listOfPath(char mac[8], char direction=UPSTREAM_PATH);
+	inline const uint8_t* getLastCommand(){return ipmgwrapper.getLastCommand();};
 	boolean registerMote(IpMgDataModel *mote);
 	IpMgDataModel *getLastMessage(void){return lastReceiveMsg;};
 	void retrieveNetworkInfo(void);
@@ -75,7 +80,7 @@ public:
 	void retrieveMoteInfo(const byte mac[8]);
     void retrieveManagerInfo(void);
     void retrieveManagerIp(void);
-	void changeNetworkId(const dn_ipmg_getNetworkConfig_rpt *netMsg, bool wholeNet);
+	void changeNetworkConfig(const dn_ipmg_getNetworkConfig_rpt *netMsg);
 
 	// Library Function
 public:

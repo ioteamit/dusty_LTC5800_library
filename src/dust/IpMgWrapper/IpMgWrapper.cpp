@@ -178,10 +178,10 @@ void IpMgWrapper::api_response_timeout(void) {
 }
 
 
-void IpMgWrapper::resetCurrentPathId(char mac[8])
+void IpMgWrapper::resetCurrentPathId(char mac[8], char pathFilter)
 {
 	memcpy(ipmg_app_vars.currentMac, mac, 8);
-	ipmg_app_vars.currentPathId = 0;
+	ipmg_app_vars.pathFilter = pathFilter;
 }
 
 void IpMgWrapper::oap_response_timeout(void) {
@@ -279,7 +279,7 @@ void IpMgWrapper::api_getNextMoteConfig(void) {
 
 	// issue function
 	err = dn_ipmg_getMoteConfig(
-	ipmg_app_vars.currentMac,                            // macAddress
+	ipmg_app_vars.currentMac,                       // macAddress
 	TRUE,                                           // next
 	(dn_ipmg_getMoteConfig_rpt*)(app_vars.replyBuf) // reply
 	);
@@ -298,7 +298,7 @@ void IpMgWrapper::api_getNextMoteConfig(void) {
 
 void IpMgWrapper::api_getNextMoteConfig_reply() {
 	dn_ipmg_getMoteConfig_rpt* reply;
-
+	
 	// log
 	SerialPrintln("INFO:     api_getNextMoteConfig_reply");
 
@@ -315,11 +315,12 @@ void IpMgWrapper::api_getNextMoteConfig_reply() {
 	printState(reply->state, true);
 	SerialPrint("INFO:     isAP=");
 	SerialPrintln(reply->isAP);
+	
+	// remember current MAC for next request
+	memcpy(ipmg_app_vars.currentMac,reply->macAddress,sizeof(reply->macAddress));
+		
 	if (reply->RC  == RC_OK) {
-		app_vars.cbStatus = Working;
-
-		// remember current MAC
-		memcpy(ipmg_app_vars.currentMac,reply->macAddress,sizeof(reply->macAddress));
+		app_vars.cbStatus = Working;		
 
 		// schedule next event
 		dustManager.getWrapper()->fsm_scheduleEvent(
@@ -327,7 +328,7 @@ void IpMgWrapper::api_getNextMoteConfig_reply() {
 		&IpMgWrapper::api_getNextMoteConfig
 		);
 
-		} else if (reply->RC == RC_END_OF_LIST){
+	} else if (reply->RC == RC_END_OF_LIST){
 		app_vars.cbStatus = Completed;
 
 		// clear timeout
@@ -354,8 +355,8 @@ void IpMgWrapper::api_getNextPathInfo(void) {
 	// issue function
 	err = dn_ipmg_getNextPathInfo(
 	ipmg_app_vars.currentMac,       // macAddress
-	0,                              // up and Downstream
-	ipmg_app_vars.currentPathId,    // next
+	ipmg_app_vars.pathFilter,                      // upstream
+	0,							    // start from first
 	(dn_ipmg_getNextPathInfo_rpt*)(app_vars.replyBuf) // reply
 	);
 
@@ -398,10 +399,11 @@ void IpMgWrapper::api_getNextPathInfo_reply() {
 	SerialPrintln(reply->numLinks);
 	SerialPrint("          quality=");
 	SerialPrintln(reply->quality);
-
+		
+		// remember current MAC for next request
+	memcpy(ipmg_app_vars.currentMac,reply->dest, 8);
+	
 	if (reply->RC  == RC_OK) {
-		// remember current link
-		ipmg_app_vars.currentPathId = reply->pathId;
 
 		// schedule next event
 		dustManager.getWrapper()->fsm_scheduleEvent(
@@ -410,8 +412,10 @@ void IpMgWrapper::api_getNextPathInfo_reply() {
 		);
 
 		app_vars.cbStatus = Working;
-		} else if (reply->RC == RC_END_OF_LIST){
+	} else if (reply->RC == RC_END_OF_LIST){
+		
 		app_vars.cbStatus = Completed;
+
 
 		// clear timeout
 		fsm_cancelEvent();
@@ -595,6 +599,7 @@ void IpMgWrapper::api_getNetworkConfig_reply(void)
 
 	SerialPrint("          autoStartNetwork=");
 	SerialPrintln(reply->autoStartNetwork);
+
 
 	if (reply->RC  == RC_OK) {
 		app_vars.cbStatus = Completed;
@@ -939,14 +944,14 @@ void IpMgWrapper::api_getManagerIp_reply()
 	}
 }
 
-void IpMgWrapper::api_changeNetworkId(const dn_ipmg_getNetworkConfig_rpt *netMsg, bool wholeNet)
+void IpMgWrapper::api_changeNetworkConfig(const dn_ipmg_getNetworkConfig_rpt *netMsg)
 {
 	dn_err_t err;
 
 	app_vars.cbStatus = Idle;
 	// log
 	SerialPrintln("");
-	SerialPrint("INFO:     api_changeNetworkId");
+	SerialPrint("INFO:     api_changeNetworkConfig");
 
 	// issue function
 	err = dn_ipmg_setNetworkConfig (netMsg->networkId, netMsg->apTxPower, netMsg->frameProfile,
@@ -963,7 +968,7 @@ void IpMgWrapper::api_changeNetworkId(const dn_ipmg_getNetworkConfig_rpt *netMsg
 	if (err == DN_ERR_NONE) {
 		app_vars.cbStatus = CommandSent;
 		// arm callback
-		fsm_setCallback(&IpMgWrapper::api_changeNetworkId_reply);
+		fsm_setCallback(&IpMgWrapper::api_changeNetworkConfig_reply);
 
 		// schedule timeout event
 		fsm_scheduleEvent(
@@ -973,12 +978,12 @@ void IpMgWrapper::api_changeNetworkId(const dn_ipmg_getNetworkConfig_rpt *netMsg
 	}
 }
 
-void IpMgWrapper::api_changeNetworkId_reply()
+void IpMgWrapper::api_changeNetworkConfig_reply()
 {
 	dn_ipmg_setNetworkConfig_rpt* reply;
 
 	// log
-	SerialPrintln("INFO:     api_changeNetworkId_reply");
+	SerialPrintln("INFO:     api_changeNetworkConfig_reply");
 
 	// cast reply
 	reply = (dn_ipmg_setNetworkConfig_rpt*)app_vars.replyBuf;

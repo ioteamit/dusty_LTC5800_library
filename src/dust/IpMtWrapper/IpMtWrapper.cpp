@@ -115,7 +115,7 @@ void IpMtWrapper::start(void)
 {
 	//schedule first event
 	//fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_getMoteStatus);
-	configureNetworkId();	
+	getConfiguredNetworkId();	
 }
 
 void IpMtWrapper::startHomologation(radioTestE txType,
@@ -490,7 +490,7 @@ void IpMtWrapper::api_configureNetworkId_reply() {
 	SerialPrintln(reply->networkId, HEX);
 	if (reply->networkId == networkId) {
 		fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_getMoteStatus);
-		} else {
+	} else {
 		networkSet = true;
 		fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_setNetworkId);
 	}
@@ -542,6 +542,69 @@ void IpMtWrapper::api_setNetworkId_reply() {
 	if (reply->RC == RC_OK) {
 		fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_getMoteStatus);
 	}
+}
+
+//===== getMac
+
+void IpMtWrapper::api_getMac(void) {
+	dn_err_t err;
+
+	// record time
+	app_vars.fsmPreviousEvent = millis();
+
+	// log
+	SerialPrintln("");
+	SerialPrint("INFO:     api_getNetworkId... returns ");
+
+	// arm callback
+	fsm_setCallback(&IpMtWrapper::api_getMac_reply);
+
+	// issue function
+	err = dn_ipmt_getParameter_macAddress(
+	(dn_ipmt_getParameter_macAddress_rpt*)(app_vars.replyBuf)
+	);
+
+	// log
+	SerialPrintln(err);
+
+	// schedule timeout event
+	fsm_scheduleEvent(SERIAL_RESPONSE_TIMEOUT, &IpMtWrapper::api_response_timeout);
+}
+
+void IpMtWrapper::api_getMac_reply() {
+	dn_ipmt_getParameter_macAddress_rpt* reply;
+
+	// cancel timeout
+	fsm_cancelEvent();
+
+	// record time
+	app_vars.fsmPreviousEvent = millis();
+
+	SerialPrintln("INFO:     api_getNetworkId_reply");
+
+	reply = (dn_ipmt_getParameter_macAddress_rpt*)app_vars.replyBuf;
+
+	SerialPrint("INFO:     Mac = ");
+	SerialPrint(reply->macAddress[0], HEX);
+	SerialPrint("-");
+	SerialPrint(reply->macAddress[1], HEX);
+	SerialPrint("-");
+	SerialPrint(reply->macAddress[2], HEX);
+	SerialPrint("-");
+	SerialPrint(reply->macAddress[3], HEX);
+	SerialPrint("-");
+	SerialPrint(reply->macAddress[4], HEX);
+	SerialPrint("-");
+	SerialPrint(reply->macAddress[5], HEX);
+	SerialPrint("-");
+	SerialPrint(reply->macAddress[6], HEX);
+	SerialPrint("-");
+	SerialPrint(reply->macAddress[7], HEX);
+
+	// restart the normal schedule
+	fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_getMoteStatus);		
+	
+	setMgStatus(Completed);
 }
 
 //===== requestService
@@ -711,11 +774,16 @@ void IpMtWrapper::executeReplyCb()
 }
 
 
-void IpMtWrapper::configureNetworkId()
+void IpMtWrapper::getConfiguredNetworkId()
 {
 	fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_configureNetworkId);
 }
 
+
+void IpMtWrapper::getMac()
+{
+	fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_getMac);
+}
 
 //=========================== callback functions for ipmt =====================
 

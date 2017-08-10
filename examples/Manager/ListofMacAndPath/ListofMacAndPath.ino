@@ -1,110 +1,174 @@
+/*
+      SmeIoT Library - DustySensor.ino
+
+   This example return the mac of the Manager and all the link connected to it
+
+  created 08 07 2017
+      by Mik (mik@ioteam.it)
+
+   This example is in the public domain
+       https://bitbucket.org/ioteamit/arduino-dust-library
+*/
 #include <DustManager.h>
 
 typedef enum {
-    NoCommand,
-    ListOfMac,
-    ListOfPath
+	NoCommand,
+	ListOfMac,
+	ListOfPath
 }FSMtestE;
 
-uint8_t listOfMac[8][10];
+char startMac[8];
 FSMtestE fsm;
-IpMgDataModel *data;
-char mac[8]={0x0,0x17,0x0D,0x00,0,0x30,0x8A,0x2A};      // NEW MOTE
-//char mac[8]={0x0,0x17,0x0D,0x00,0,0x30,0x89,0x3c};    // OLD MOTE
-uint16_t srcPort = 0x61020;
-uint16_t dstPort = 0x60000;
 
 //=========================== "main" ==========================================
 
-void setup() {
-    memset(listOfMac, 0 , sizeof(listOfMac));
-    fsm = NoCommand;
-    while (!SerialUSB) {
-        ;
-    }
+static void printByte(const uint8_t* payload, uint8_t length) {
+	uint8_t i;
 
-    IpMgDataModel*  model = new IpMgDataModel();
-    SerialUSB.println("Start");
-    dustManager.begin(model);
-
-    data = new IpMgDataModel((const uint8_t*)mac, srcPort, dstPort);
+	SerialUSB.print(" ");
+	for (i=0;i<length;i++) {
+		SerialUSB.print(payload[i], HEX);
+		if (i<length-1) {
+			SerialUSB.print("-");
+		}
+	}
 }
 
-void printByte(uint8_t* payload, uint8_t length) {
-    uint8_t i;
+void notificationCB (uint8_t eventId, uint8_t mac[8]) {
 
-    SerialUSB.print(" ");
-    for (i=0;i<length;i++) {
-        SerialUSB.print(payload[i], HEX);
-        if (i<length-1) {
-            SerialUSB.print("-");
-        }
-    }
+	// only operational and lost are handled by the library
+	switch (eventId)
+	{
+		case DN_EVENTID_EVENTMOTEOPERATIONAL:
+		SerialUSB.print("Join mote = ");
+		printByte(mac, 8);
+		memcpy(startMac, mac ,8); // use the new Mac as start for listing
+		break;
+
+		case DN_EVENTID_EVENTMOTELOST:
+		SerialUSB.print("Lost mote = ");
+		printByte(mac, 8);
+		break;
+
+		default:
+		break;
+	}
+
+}
+
+static void printHelp(void) {
+	SerialUSB.println("Example for some Network information:\n");
+	SerialUSB.println("1) show List of Mote");
+	SerialUSB.println("2) show List of Path");
+	SerialUSB.println("\n\nh) print this help");
+}
+
+void setup() {
+	fsm = NoCommand;
+	SerialUSB.begin(15200);
+	
+    while (!SerialUSB) {
+		;
+	}
+	
+	printHelp();
+	dustManager.begin(false, NULL, PIN_DUST_CTS, &SerialDust);
+
 }
 
 void loop() {
-    dn_ipmg_getMoteConfig_rpt* reply;
+	
+	char option;
+	const dn_ipmg_getMoteConfig_rpt*	moteInfo;
+	const dn_ipmg_getNextPathInfo_rpt*  pathInfo;
 
-    DustCbStatusE msgStatus = dustManager.readData();
-    switch (msgStatus) {
-        case Idle:
-        break;
-        case CommandSent:
-        SerialUSB.println("Started");
-        break;
+	DustCbStatusE msgStatus = dustManager.readData();
+	switch (msgStatus) {
+		case Idle:
+		break;
 
-        case Working:
-        switch (fsm) {
-            SerialUSB.println("Working");
+		case Working:
+		SerialUSB.println("\n\r ");
+		switch (fsm) {
 
-            case ListOfMac:
-            reply =(dn_ipmg_getMoteConfig_rpt*) dustManager.getLastMessage();
-            if (reply->isAP==FALSE) {
-                SerialUSB.print("Mote Mac = ");
-                printByte(reply->macAddress, sizeof(reply->macAddress));
-                } else {
-                SerialUSB.print("Manager Mac = ");
-                printByte(reply->macAddress, sizeof(reply->macAddress));
+			case ListOfMac:
+			moteInfo = (const dn_ipmg_getMoteConfig_rpt*)dustManager.getLastCommand();
+			// log
+			SerialUSB.println("INFO:");
+			SerialUSB.print("     MAC=");
+			printByte(moteInfo->macAddress, sizeof(moteInfo->macAddress));
+			SerialUSB.print("\n\r");
+			SerialUSB.print("     state=");
+			SerialUSB.println(moteInfo->state);
+			if (moteInfo->isAP)
+				SerialUSB.print("     is Manager");
+			else
+				SerialUSB.print("     is Mote");
+			break;
 
-            }
-            break;
+			case ListOfPath:
+			pathInfo = (const dn_ipmg_getNextPathInfo_rpt*)dustManager.getLastCommand();
+			// log
+			SerialUSB.println("INFO:");
+			SerialUSB.print("          source=");
+			printByte(pathInfo->source, 8);
+			SerialUSB.println();
+			SerialUSB.print("          dest=");
+			printByte(pathInfo->dest,8);
+			SerialUSB.println();
+			SerialUSB.print("          direction=");
+			SerialUSB.println(pathInfo->direction);
+			SerialUSB.print("          numLinks=");
+			SerialUSB.println(pathInfo->numLinks);
+			SerialUSB.print("          quality=");
+			SerialUSB.println(pathInfo->quality);
+			SerialUSB.print("          pathId=");
+			SerialUSB.println(pathInfo->pathId);
+			break;
+		}
 
-            case ListOfPath:
-            break;
-        }
+		break;
 
-        break;
+		case Completed:
+		SerialUSB.println("\n\rCompleted");
+		switch (fsm) {
 
-        case Completed:
-        SerialUSB.println("Completed");
-        switch (fsm) {
-            SerialUSB.println("Working");
+			case ListOfPath:
+			break;
+		}
+		fsm = NoCommand;
+		break;
 
-            case ListOfMac:
-            fsm = ListOfPath;
-            dustManager.listOfPath(mac);
-            break;
+		case DataReceived:
+		SerialUSB.println("DataMote");
+		break;
 
-            case ListOfPath:
-            break;
-        }
-        break;
+		default:
+		break;
+	}
 
-        case DataReceived:
-        SerialUSB.println("DataMote");
-        break;
-
-        default:
-        break;
-    }
-
-    if (isButtonOnePressed()){
-        fsm = ListOfMac;
-        dustManager.listOfMac();
-    }
-
-    if (isButtonTwoPressed()){
-        data->dataToSend((const uint8_t*)"Hello", 5);
-        dustManager.sendData(data);
-    }
+	if (SerialUSB.available()) {
+		option = SerialUSB.read();
+		
+		switch (option) {
+			case '1':
+			fsm = ListOfMac;
+			dustManager.listOfMac();
+			break;
+			
+			case '2':
+			fsm = ListOfPath;
+			dustManager.listOfPath(startMac);
+			break;
+			
+			case 'h':
+			printHelp();
+			break;
+			
+			default:
+			break;
+		}
+	}
 }
+
+

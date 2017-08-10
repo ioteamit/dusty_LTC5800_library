@@ -81,5 +81,9 @@ void DustMote::sendData (DataModel *sendData) {
 };
 
 void DustMote::retrieveNetworkId(void) {
-	ipmtwrapper.configureNetworkId();
+	ipmtwrapper.getConfiguredNetworkId();
+}
+
+void DustMote::retrieveMac(void) {
+	ipmtwrapper.getMac();
 }

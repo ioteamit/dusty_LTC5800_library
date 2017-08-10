@@ -68,8 +68,9 @@ public:
 	void start(void);
 	DustCbStatusE readData (void);
 	void sendData (DataModel *sendData=NULL);
-	inline const uint8_t* getLastReply(){return ipmtwrapper.getLastReply();};
+	inline const uint8_t* getLastCommand(){return ipmtwrapper.getLastCommand();};
 	void retrieveNetworkId();
+	void retrieveMac();
 	inline bool	getHomologationResult(){return ipmtwrapper.getHomologationResult();};
 	inline bool	getHomologationRunning(){return ipmtwrapper.getHomologationRunning();};
 

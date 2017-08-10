@@ -28,11 +28,11 @@
 
 //=========================== defines =========================================
 #ifndef DUST_DEBUG
-#define DUST_DEBUG
+//#define DUST_DEBUG
 #endif
 
 #ifndef DEBUG_ON_AIR
-#define DEBUG_ON_AIR
+//#define DEBUG_ON_AIR
 #endif
 
 #define TIME_T                    unsigned long

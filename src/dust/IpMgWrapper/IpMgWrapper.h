@@ -37,7 +37,7 @@ typedef struct {
 	bool                    fsmArmed;
 	// api
 	uint8_t                 currentMac[8];
-	uint16_t                currentPathId;
+	char					pathFilter;
 
 } mg_app_vars_t;
 
@@ -73,16 +73,16 @@ public:
 	void            api_initiateConnect();
 	void            api_subscribe();
 	void            api_getNextMoteConfig();
-	void            api_getNextPathInfo();
-	inline void     resetCurrentMac() {memset(ipmg_app_vars.currentMac,0, sizeof(ipmg_app_vars.currentMac));};
-	void            resetCurrentPathId(char mac[8]);
+	void            api_getNextPathInfo(void);
+	inline void     resetCurrentMac() {memset(ipmg_app_vars.currentMac,0, sizeof(ipmg_app_vars.currentMac));}; // start from manager
+	void            resetCurrentPathId(char mac[8], char pathFilter);
 	bool            sendData(DataModel *sendData);
 	void            api_getNetworkInfo(void);
 	void            api_getNetworkConfig();
 	void            api_getMoteInfo(const uint8_t mac[8]);
     void            api_getSystemInfo(void);
 	void			api_getManagerIp(void);
-	void api_changeNetworkId(const dn_ipmg_getNetworkConfig_rpt *netMsg, bool wholeNet);
+	void			api_changeNetworkConfig(const dn_ipmg_getNetworkConfig_rpt *netMsg);
 
 
 private:
@@ -98,7 +98,7 @@ private:
 	void            api_getMoteInfo_reply();
     void            api_getSystemInfo_reply();
     void            api_getManagerIp_reply();
-	void			api_changeNetworkId_reply();
+	void			api_changeNetworkConfig_reply();
 
 private:
 	//===== attributes

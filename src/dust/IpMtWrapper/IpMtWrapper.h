@@ -86,7 +86,8 @@ class IpMtWrapper : public IpMgMtWrapper{
 	void                api_getServiceInfo();
 	void                executeStatusUpdCb(uint8_t    state);
 	void                executeReplyCb();
-	void				configureNetworkId();
+	void				getConfiguredNetworkId();
+	void				getMac();
 	void				startHomologation(radioTestE txType, uint16_t chanMask, int8_t power);
 	inline bool		    getHomologationResult(){return homologationResult;};
 	inline bool		    getHomologationRunning(){return homologationRunning;};
@@ -112,6 +113,7 @@ class IpMtWrapper : public IpMgMtWrapper{
 	void                api_requestService();
 	void                api_DummyStatus();
 	void				api_configureNetworkId();
+	void				api_getMac();
 	void				api_setNetworkId();
 	void				api_setRatioTestTx();
 
@@ -125,6 +127,7 @@ class IpMtWrapper : public IpMgMtWrapper{
 	void                api_requestService_reply();
 	void                api_sendTo_reply();
 	void				api_configureNetworkId_reply();
+	void				api_getMac_reply();
 	void				api_setNetworkId_reply();
 	void				api_setRatioTestTx_reply();
 
