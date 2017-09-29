@@ -57,6 +57,12 @@ public:
 			boolean polling=true, status_update  statusUpd_cb = NULL,
 			char CtsPin = PIN_ANTENNA_CTS, Uart *serial=&serialAntenna,
 			uint16_t			networkId=DEFAULT_NETWORK_ID);
+#elif ARDUINO_SAMD_DUSTINO
+	void begin (uint16_t srcPort, uint8_t* destAddr, uint16_t destPort,
+	TIME_T dataPeriod, IpMtDataModel *dataToSend,
+	boolean polling=true, status_update  statusUpd_cb = NULL,
+	char CtsPin = PIN_DUST_CTS, Uart *serial=&SerialDust,
+	uint16_t networkId=DEFAULT_NETWORK_ID);
 #else
 	//by default use one common Arduino PIN
 	void begin (uint16_t srcPort, uint8_t* destAddr, uint16_t destPort,
