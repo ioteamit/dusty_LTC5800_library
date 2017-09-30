@@ -60,13 +60,13 @@ private:
 public:
 #ifdef MKR_SAMD_LINEAR
 	boolean begin (bool eventNotification=false, eventCallBack eventFunct=NULL,
-			char CtsPin = PIN_ANTENNA_CTS, Uart *serial=&serialAntenna);
+			char CtsPin = PIN_ANTENNA_CTS, char RtsPin=-1, Uart *serial=&serialAntenna);
 #elif ARDUINO_SAMD_SMARTEVERYTHING_DRAGONFLY
 boolean begin (bool eventNotification=false, eventCallBack eventFunct=NULL,
-			  char CtsPin = PIN_DUST_CTS, Uart *serial=&SerialDust); // the CtsPin in Dragonfly is keep high by Hw
+			  char CtsPin = PIN_DUST_CTS,  char RtsPin=-1, Uart *serial=&SerialDust); // the CtsPin in Dragonfly is keep high by Hw
 #else
 	boolean begin (bool eventNotification=false, eventCallBack eventFunct=NULL,
-			char CtsPin = PIN_LED, Uart *serial=&Serial1); //by default use one common Arduino PIN
+			char CtsPin = PIN_LED, char RtsPin=-1, Uart *serial=&Serial1); //by default use one common Arduino PIN
 #endif
 	DustCbStatusE readData (void);
 	boolean sendData(DataModel *sendData=NULL);

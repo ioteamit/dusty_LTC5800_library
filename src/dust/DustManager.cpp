@@ -28,7 +28,7 @@
 DustManager  dustManager;
 
 boolean DustManager::begin (bool eventNotification, eventCallBack eventFunct,
-		char CtsPin, Uart *serial)
+		char CtsPin, char RtsPin, Uart *serial)
 {
     
 	if (eventNotification && eventFunct == NULL) {
@@ -38,7 +38,7 @@ boolean DustManager::begin (bool eventNotification, eventCallBack eventFunct,
 	}
 
 	this->eventFunct = eventFunct;
-	DustMgMt::begin(CtsPin);        
+	DustMgMt::begin(CtsPin, RtsPin);        
 
 	//initialize the Motes array
 	uint8_t i;

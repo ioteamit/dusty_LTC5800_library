@@ -32,7 +32,7 @@ DustMgMt::DustMgMt(){
 
 }
 
-void DustMgMt::begin(char CtsPin){
+void DustMgMt::begin(char CtsPin, char RtsPin){
 	
 	// by default the module  is not in homologation phase
 	homologation = false;
@@ -43,5 +43,15 @@ void DustMgMt::begin(char CtsPin){
         // UART_RX_CTSn, is not handle,
         pinMode(CtsPin, OUTPUT); //PIN_ANTENNA_CTS
         digitalWrite(CtsPin, LOW);
+    }
+	
+	
+	
+    // works only with a valid Arduino Pin
+    if (RtsPin>1) {
+        // UART_TX_CTSn must be forced to LOW
+        // UART_RX_CTSn, is not handle,
+        pinMode(RtsPin, OUTPUT); //PIN_ANTENNA_CTS
+        digitalWrite(RtsPin, HIGH);
     }
 }

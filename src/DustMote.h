@@ -55,20 +55,20 @@ public:
 	void begin (uint16_t srcPort, uint8_t* destAddr, uint16_t destPort,
 			TIME_T dataPeriod, IpMtDataModel *dataToSend,
 			boolean polling=true, status_update  statusUpd_cb = NULL,
-			char CtsPin = PIN_ANTENNA_CTS, Uart *serial=&serialAntenna,
+			char CtsPin = PIN_ANTENNA_CTS, char RtsPin = -1,Uart *serial=&serialAntenna,
 			uint16_t			networkId=DEFAULT_NETWORK_ID);
 #elif ARDUINO_IOTEAM_SAMD_DUSTINO
 	void begin (uint16_t srcPort, uint8_t* destAddr, uint16_t destPort,
 	TIME_T dataPeriod, IpMtDataModel *dataToSend,
 	boolean polling=true, status_update  statusUpd_cb = NULL,
-	char CtsPin = PIN_DUST_CTS, Uart *serial=&SerialDust,
+	char CtsPin = PIN_DUST_RTS, char RtsPin = PIN_DUST_CTS,Uart *serial=&SerialDust,
 	uint16_t networkId=DEFAULT_NETWORK_ID);
 #else
 	//by default use one common Arduino PIN
 	void begin (uint16_t srcPort, uint8_t* destAddr, uint16_t destPort,
 			TIME_T dataPeriod, IpMtDataModel *dataToSend,
 			boolean polling=true, status_update  statusUpd_cb = NULL,
-			char CtsPin = PIN_LED, Uart *serial=&Serial1,
+			char CtsPin = PIN_LED, char RtsPin = -1, Uart *serial=&Serial1,
 			uint16_t			networkId=DEFAULT_NETWORK_ID); 
 #endif
 	void start(void);

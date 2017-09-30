@@ -39,7 +39,7 @@ class DustMgMt {
 		int8_t power;
 	
 		// methods
-		void begin(char CtsPin);
+		void begin(char CtsPin, char RtsPin);
 	
 		// Manager & Mote common method
 	public:	

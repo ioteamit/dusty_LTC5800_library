@@ -30,27 +30,11 @@ DustMote  dustMote;
 
 void DustMote::begin (uint16_t srcPort, uint8_t* destAddr, uint16_t destPort,
 		TIME_T dataPeriod, IpMtDataModel *dataToSend,
-		boolean polling,  status_update  statusUpd_cb, char CtsPin, Uart *serial,
+		boolean polling,  status_update  statusUpd_cb, 
+		char CtsPin, char RtsPin, Uart *serial,
 		uint16_t			networkId)
 {	
-#if defined (DUST_DEBUG)
-    #ifdef MKR_SAMD_LINEAR
-    if (serialAntenna == *serial) {
-        SerialPrint("Serial of ");
-        SerialPrintln("MKR_SAMD_LINEAR");
-    } else   
-    #endif
-     if (Serial1 == *serial) {
-        SerialPrint("Serial of ");
-        SerialPrintln("Serial1");
-    }  
-    else if (Serial == *serial) {
-        SerialPrint("Serial of ");
-        SerialPrintln("Serial1");
-    }
-#endif
-
-	DustMgMt::begin(CtsPin);
+	DustMgMt::begin(CtsPin, RtsPin);
 
 	// it could be ignored
 	ipmtwrapper.begin(srcPort, destAddr, destPort, dataPeriod,
