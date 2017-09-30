@@ -57,7 +57,7 @@ public:
 			boolean polling=true, status_update  statusUpd_cb = NULL,
 			char CtsPin = PIN_ANTENNA_CTS, Uart *serial=&serialAntenna,
 			uint16_t			networkId=DEFAULT_NETWORK_ID);
-#elif IOTEAM_SAMD_DUSTINO
+#elif ARDUINO_IOTEAM_SAMD_DUSTINO
 	void begin (uint16_t srcPort, uint8_t* destAddr, uint16_t destPort,
 	TIME_T dataPeriod, IpMtDataModel *dataToSend,
 	boolean polling=true, status_update  statusUpd_cb = NULL,
