@@ -51,6 +51,7 @@ bool				networkSet;  // used in case of changing of the networkId
 IpMtWrapper::IpMtWrapper() {
 	homologationRunning = false;
 	networkSet = false;
+	memset(&networkInfo, 0, sizeof(dn_ipmt_getParameter_netInfo_rpt));
 }
 
 /**
@@ -115,7 +116,7 @@ void IpMtWrapper::start(void)
 {
 	//schedule first event
 	//fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_getMoteStatus);
-	getConfiguredNetworkId();	
+	retrieveNetworkInfo();	
 }
 
 void IpMtWrapper::startHomologation(radioTestE txType,
@@ -189,7 +190,7 @@ void IpMtWrapper::api_getMoteStatus(void) {
 
 	// log
 	SerialPrintln("");
-	SerialPrint("INFO:     api_getMoteStatus... returns ");
+	SerialPrint("INFO:     api_getMoteStatus  ");
 
 	// arm callback
 	fsm_setCallback(&IpMtWrapper::api_getMoteStatus_reply);
@@ -200,7 +201,8 @@ void IpMtWrapper::api_getMoteStatus(void) {
 	);
 
 	// log
-	SerialPrintln(err);
+	SerialPrintln(err);	
+	SerialPrint("return : ");
 
 	// schedule timeout event
 	fsm_scheduleEvent(SERIAL_RESPONSE_TIMEOUT, &IpMtWrapper::api_response_timeout);
@@ -456,7 +458,7 @@ void IpMtWrapper::api_configureNetworkId(void) {
 
 	// log
 	SerialPrintln("");
-	SerialPrint("INFO:     api_getNetworkId... returns ");
+	SerialPrint("INFO:     api_getNetworkId ");
 
 	// arm callback
 	fsm_setCallback(&IpMtWrapper::api_configureNetworkId_reply);
@@ -468,6 +470,7 @@ void IpMtWrapper::api_configureNetworkId(void) {
 
 	// log
 	SerialPrintln(err);
+	SerialPrint("return : ");
 
 	// schedule timeout event
 	fsm_scheduleEvent(SERIAL_RESPONSE_TIMEOUT, &IpMtWrapper::api_response_timeout);
@@ -506,7 +509,7 @@ void IpMtWrapper::api_setNetworkId(void) {
 
 	// log
 	SerialPrintln("");
-	SerialPrint("INFO:     api_setNetworkId... returns ");
+	SerialPrint("INFO:     api_setNetworkId ");
 
 	// arm callback
 	fsm_setCallback(&IpMtWrapper::api_setNetworkId_reply);
@@ -519,6 +522,7 @@ void IpMtWrapper::api_setNetworkId(void) {
 
 	// log
 	SerialPrintln(err);
+	SerialPrint("return : ");
 
 	// schedule timeout event
 	fsm_scheduleEvent(SERIAL_RESPONSE_TIMEOUT, &IpMtWrapper::api_response_timeout);
@@ -554,7 +558,7 @@ void IpMtWrapper::api_getMac(void) {
 
 	// log
 	SerialPrintln("");
-	SerialPrint("INFO:     api_getNetworkId... returns ");
+	SerialPrint("INFO:     api_getMac... returns ");
 
 	// arm callback
 	fsm_setCallback(&IpMtWrapper::api_getMac_reply);
@@ -580,10 +584,9 @@ void IpMtWrapper::api_getMac_reply() {
 	// record time
 	app_vars.fsmPreviousEvent = millis();
 
-	SerialPrintln("INFO:     api_getNetworkId_reply");
+	SerialPrintln("INFO:     api_getMac_reply");
 
 	reply = (dn_ipmt_getParameter_macAddress_rpt*)app_vars.replyBuf;
-
 	SerialPrint("INFO:     Mac = ");
 	SerialPrint(reply->macAddress[0], HEX);
 	SerialPrint("-");
@@ -779,6 +782,11 @@ void IpMtWrapper::getConfiguredNetworkId()
 	fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_configureNetworkId);
 }
 
+void IpMtWrapper::retrieveNetworkInfo()
+{
+	fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_getNetworkInfo);
+}
+
 
 void IpMtWrapper::getMac()
 {
@@ -878,7 +886,6 @@ void IpMtWrapper::api_setRatioTestTx()
 	homologationRunning = true;
 }
 	
-volatile uint8_t    debug;
 void IpMtWrapper::api_setRatioTestTx_reply()
 {
 	dn_ipmt_testRadioTxExt_rpt* reply;
@@ -894,7 +901,6 @@ void IpMtWrapper::api_setRatioTestTx_reply()
 
 	reply = (dn_ipmt_testRadioTxExt_rpt*)app_vars.replyBuf;
 
-	debug = reply->RC;
 	if (reply->RC == RC_OK) {
 		homologationResult = true;
 		SerialPrintln("OK");
@@ -910,6 +916,62 @@ void IpMtWrapper::api_setRatioTestTx_reply()
 	homologationRunning = false;
 }
 
+//===== getNetwork Info
+
+void IpMtWrapper::api_getNetworkInfo(void) {
+	dn_err_t err;
+
+	// record time
+	app_vars.fsmPreviousEvent = millis();
+
+	// log
+	SerialPrintln("");
+	SerialPrint("INFO:     api_getNetworkInfo ");
+
+	// arm callback
+	fsm_setCallback(&IpMtWrapper::api_getNetworkInfo_reply);
+
+	// issue function
+	err = dn_ipmt_getParameter_netInfo(
+	(dn_ipmt_getParameter_netInfo_rpt*)(app_vars.replyBuf)
+	);
+
+	// log
+	SerialPrintln(err);
+	SerialPrint("return : ");
+
+	// schedule timeout event
+	fsm_scheduleEvent(SERIAL_RESPONSE_TIMEOUT, &IpMtWrapper::api_response_timeout);
+}
+
+	;
+void IpMtWrapper::api_getNetworkInfo_reply() {
+	dn_ipmt_getParameter_netInfo_rpt* reply;
+
+	// cancel timeout
+	fsm_cancelEvent();
+
+	// record time
+	app_vars.fsmPreviousEvent = millis();
+
+	SerialPrintln("INFO:     api_getNetworkInfo_reply");
+
+	reply = (dn_ipmt_getParameter_netInfo_rpt*)app_vars.replyBuf;
+	memcpy(&networkInfo, reply, sizeof(dn_ipmt_getParameter_netInfo_rpt));
+
+	SerialPrint("INFO:     networkId = 0x");
+	SerialPrintln(reply->networkId, HEX);
+	if (reply->networkId == networkId) {
+		fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_getMoteStatus);
+	} else {
+		networkSet = true;
+		fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_setNetworkId);
+	}
+}
+
+const char*IpMtWrapper::getMacAddress(void) {
+		return (const char*)networkInfo.macAddress;
+}
 
 extern "C" void dn_ipmt_reply_cb(uint8_t cmdId) {
 	SerialPrint("\n  on dn_ipmt_reply_cb received cmdId=");

@@ -76,9 +76,13 @@ public:
 	void sendData (DataModel *sendData=NULL);
 	inline const uint8_t* getLastCommand(){return ipmtwrapper.getLastCommand();};
 	void retrieveNetworkId();
-	void retrieveMac();
+	void retrieveNetworkInfo();
+	inline const char* getMac(void) {
+		return ipmtwrapper.getMacAddress();
+	}
 	inline bool	getHomologationResult(){return ipmtwrapper.getHomologationResult();};
 	inline bool	getHomologationRunning(){return ipmtwrapper.getHomologationRunning();};
+	
 
 };
 

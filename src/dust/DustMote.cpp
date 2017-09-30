@@ -84,6 +84,6 @@ void DustMote::retrieveNetworkId(void) {
 	ipmtwrapper.getConfiguredNetworkId();
 }
 
-void DustMote::retrieveMac(void) {
-	ipmtwrapper.getMac();
+void DustMote::retrieveNetworkInfo(void) {
+	ipmtwrapper.retrieveNetworkInfo();
 }

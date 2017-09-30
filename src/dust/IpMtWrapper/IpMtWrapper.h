@@ -87,10 +87,13 @@ class IpMtWrapper : public IpMgMtWrapper{
 	void                executeStatusUpdCb(uint8_t    state);
 	void                executeReplyCb();
 	void				getConfiguredNetworkId();
+	void			    retrieveNetworkInfo();
+	void				api_getNetworkInfo(void);
 	void				getMac();
 	void				startHomologation(radioTestE txType, uint16_t chanMask, int8_t power);
 	inline bool		    getHomologationResult(){return homologationResult;};
 	inline bool		    getHomologationRunning(){return homologationRunning;};
+	const char*         getMacAddress(void);
 	
 	private:
 	//===== attributes
@@ -130,11 +133,13 @@ class IpMtWrapper : public IpMgMtWrapper{
 	void				api_getMac_reply();
 	void				api_setNetworkId_reply();
 	void				api_setRatioTestTx_reply();
+	void				api_getNetworkInfo_reply();
 
 	private:
 	//===== attributes
 	mt_app_vars_t          ipmt_app_vars;
 	uint16_t			   networkId;
+	dn_ipmt_getParameter_netInfo_rpt networkInfo;
 };
 
 
