@@ -14,7 +14,9 @@
 typedef enum {
 	NoCommand,
 	ListOfMac,
-	ListOfPath
+	ListOfPath,
+	NetworkConfig,
+	ManagerInfo
 }FSMtestE;
 
 char startMac[8];
@@ -60,6 +62,8 @@ static void printHelp(void) {
 	SerialUSB.println("Example for some Network information:\n");
 	SerialUSB.println("1) show List of Mote");
 	SerialUSB.println("2) show List of Path");
+	SerialUSB.println("3) getNetworkConfig");
+	SerialUSB.println("4) getManagerInfo");
 	SerialUSB.println("\n\nh) print this help");
 }
 
@@ -67,20 +71,20 @@ void setup() {
 	fsm = NoCommand;
 	SerialUSB.begin(15200);
 	
-    while (!SerialUSB) {
-		;
-	}
+
 	
 	printHelp();
-	dustManager.begin(false, NULL, PIN_DUST_CTS, &SerialDust);
+	dustManager.begin(false, NULL, PIN_DUST_CTS);
 
 }
+const dn_ipmg_getNetworkInfo_rpt* networkInfo;
+const dn_ipmg_getSystemInfo_rpt* managerInfo;
+const dn_ipmg_getMoteConfig_rpt*	moteInfo;
+const dn_ipmg_getNextPathInfo_rpt*  pathInfo;
 
 void loop() {
 	
 	char option;
-	const dn_ipmg_getMoteConfig_rpt*	moteInfo;
-	const dn_ipmg_getNextPathInfo_rpt*  pathInfo;
 
 	DustCbStatusE msgStatus = dustManager.readData();
 	switch (msgStatus) {
@@ -101,9 +105,9 @@ void loop() {
 			SerialUSB.print("     state=");
 			SerialUSB.println(moteInfo->state);
 			if (moteInfo->isAP)
-				SerialUSB.print("     is Manager");
+			SerialUSB.print("     is Manager");
 			else
-				SerialUSB.print("     is Mote");
+			SerialUSB.print("     is Mote");
 			break;
 
 			case ListOfPath:
@@ -135,6 +139,14 @@ void loop() {
 
 			case ListOfPath:
 			break;
+			
+			case NetworkConfig:
+			networkInfo = (const dn_ipmg_getNetworkInfo_rpt*)dustManager.getLastCommand();
+			break;
+			
+			case ManagerInfo:
+			managerInfo = (dn_ipmg_getSystemInfo_rpt*)dustManager.getLastCommand();
+			break;
 		}
 		fsm = NoCommand;
 		break;
@@ -161,6 +173,16 @@ void loop() {
 			dustManager.listOfPath(startMac);
 			break;
 			
+			case '3':
+			fsm = NetworkConfig;
+			dustManager.retrieveNetworkInfo();
+			break;
+			
+			case '4':
+			fsm = ManagerInfo;
+			dustManager.retrieveManagerInfo();
+			break;
+			
 			case 'h':
 			printHelp();
 			break;
@@ -170,5 +192,4 @@ void loop() {
 		}
 	}
 }
-
 
