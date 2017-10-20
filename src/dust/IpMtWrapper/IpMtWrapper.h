@@ -88,12 +88,14 @@ public:
     void                executeReplyCb();
     void                getConfiguredNetworkId();
     void                retrieveNetworkInfo();
+	void                api_geTimeInfo();
     void                api_getNetworkInfo(void);
     void                getMac();
     void                startHomologation(radioTestE txType, uint16_t chanMask, int8_t power);
     inline bool         getHomologationResult(){return homologationResult;};
     inline bool         getHomologationRunning(){return homologationRunning;};
     const char*         getMacAddress(void);
+	void				retrieveTimeInfo(void);
 
 private:
     //===== attributes
@@ -134,6 +136,7 @@ private:
     void                api_setNetworkId_reply();
     void                api_setRatioTestTx_reply();
     void                api_getNetworkInfo_reply();
+    void                api_geTimeInfo_reply();
 
 private:
     //===== attributes

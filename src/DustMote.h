@@ -77,6 +77,7 @@ public:
 	inline const uint8_t* getLastCommand(){return ipmtwrapper.getLastCommand();};
 	void retrieveNetworkId();
 	void retrieveNetworkInfo();
+	void retrieveTime();
 	inline const char* getMac(void) {
 		return ipmtwrapper.getMacAddress();
 	}

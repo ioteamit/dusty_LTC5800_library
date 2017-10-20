@@ -973,6 +973,58 @@ const char*IpMtWrapper::getMacAddress(void) {
     return (const char*)networkInfo.macAddress;
 }
 
+
+
+//===== retrieveTimeInfo
+
+void IpMtWrapper::retrieveTimeInfo() {
+	fsm_scheduleEvent(2*CMD_PERIOD, &IpMtWrapper::api_geTimeInfo);
+}
+
+void IpMtWrapper::api_geTimeInfo(void) {
+	dn_err_t err;
+
+	// record time
+	app_vars.fsmPreviousEvent = millis();
+
+	// log
+	SerialPrintln("");
+	SerialPrint("INFO:     api_getTimeInfo.. returns ");
+
+	// arm callback
+	fsm_setCallback(&IpMtWrapper::api_geTimeInfo_reply);
+
+	// issue function
+	err = dn_ipmt_getParameter_time(
+	(dn_ipmt_getParameter_time_rpt*)(app_vars.replyBuf)
+	);
+
+	// log
+	SerialPrintln(err);
+
+	// schedule timeout event
+	fsm_scheduleEvent(SERIAL_RESPONSE_TIMEOUT, &IpMtWrapper::api_response_timeout);
+}
+
+void IpMtWrapper::api_geTimeInfo_reply() {
+
+	dn_ipmt_getParameter_time_rpt* reply;
+
+	// cancel timeout
+	fsm_cancelEvent();
+
+	// record time
+	app_vars.fsmPreviousEvent = millis();
+
+	SerialPrintln("INFO:     api_getTimeInfo_reply");
+
+	reply = (dn_ipmt_getParameter_time_rpt*)app_vars.replyBuf;
+
+	setMgStatus(Completed);
+}
+//===== retrieveTimeInfo End
+
+
 extern "C" void dn_ipmt_reply_cb(uint8_t cmdId) {
     SerialPrint("\n  on dn_ipmt_reply_cb received cmdId=");
     SerialPrintln(cmdId, HEX);

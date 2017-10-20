@@ -71,3 +71,7 @@ void DustMote::retrieveNetworkId(void) {
 void DustMote::retrieveNetworkInfo(void) {
 	ipmtwrapper.retrieveNetworkInfo();
 }
+
+void DustMote::retrieveTime() {
+	ipmtwrapper.retrieveTimeInfo();
+}

@@ -28,6 +28,7 @@ listOfMac	        KEYWORD2
 getLastMessage	        KEYWORD2
 getDestinationMac	        KEYWORD2
 fetchLastMessage	        KEYWORD2
+retrieveTime	        KEYWORD2
 dataToSend	        KEYWORD2
 setPriority	        KEYWORD2
 
