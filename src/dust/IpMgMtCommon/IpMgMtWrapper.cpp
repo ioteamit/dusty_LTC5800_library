@@ -74,5 +74,12 @@ TIME_T IpMgMtWrapper::parseMessage(void){
     // kick the fsm
     return  millis();
 }
+
+void IpMgMtWrapper::resetDBGMsg(void){
+#ifdef DEBUG_ON_AIR
+	memset(debugMsg,0,2000);
+	rcvPtr=0;
+#endif
+}
 // need the static variable allocation
 Uart* IpMgMtWrapper::dustSerial=&Serial1;

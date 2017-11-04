@@ -95,7 +95,7 @@ public:
     inline const uint8_t* getLastCommand(){return app_vars.replyBuf;};
     static inline Uart*   getInternalSerial(){return IpMgMtWrapper::dustSerial;};
     inline void           setMgStatus(DustCbStatusE newStatus) {app_vars.cbStatus = newStatus;};
-
+	void resetDBGMsg(void);
 protected:
     virtual void    executeReplyCb()=0;
     /*
