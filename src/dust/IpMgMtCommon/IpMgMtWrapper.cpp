@@ -51,12 +51,14 @@ bool IpMgMtWrapper::readMessageExecuteCommand(void){
 
         // read a serial byte
         byteRead = uint8_t(IpMgMtWrapper::dustSerial->read());
-		
+
+#ifdef DEBUG_ON_AIR		
 		if (rcvPtr < 2000)
 			debugMsg[rcvPtr++] = byteRead;
 			else
 			debugMsg[rcvPtr-1] = byteRead;
         debugOnAir(byteRead, '-');
+#endif		
 
         // hand over byte to ipmg module
         app_vars.ipmgmt_uart_rxByte_cb(byteRead);

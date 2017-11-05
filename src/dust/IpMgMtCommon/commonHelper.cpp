@@ -48,16 +48,20 @@ void debugOnAir(uint8_t byte, uint8_t dir) {
 #endif
 }
 
+#ifdef DEBUG_ON_AIR
 uint8_t debugMsg[2000];
 uint16_t rcvPtr=1000;
 uint16_t sendPtr=0;
+#endif
 
 void dn_uart_txByte(uint8_t byte) {
     // write to the serial 1 port on the Arduino Due
     IpMgMtWrapper::getInternalSerial()->write(byte);
+#ifdef DEBUG_ON_AIR
 	if (sendPtr<1000)
 		debugMsg[sendPtr++] = byte;
     debugOnAir(byte, '+');
+#endif
 }
 
 void dn_uart_txFlush() {

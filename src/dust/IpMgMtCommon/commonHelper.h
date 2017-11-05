@@ -28,6 +28,7 @@
 
 #include "sm_clib/dn_uart.h"
 #include "variant.h"
+#include "commonDefines.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,9 +58,11 @@ void dn_read_uint32_t(uint32_t* to, uint8_t* from);
 }
 #endif
 
+#ifdef DEBUG_ON_AIR
 extern uint8_t debugMsg[2000];
 extern uint16_t rcvPtr;
 extern uint16_t sendPtr;
+#endif
 
     void debugOnAir(uint8_t byte, uint8_t dir);
     void printState(uint8_t state, bool manager);
