@@ -1,9 +1,9 @@
 /*
-      SmeIoT Library - DustySensor.ino
+      SmeIoT Library - SmartMeshIpCommand.ino
 
-   This example return the mac of the Manager and all the link connected to it
+   This example shows some useful comand of the SmartMeshIp network
 
-  created 08 07 2017
+  created 08 12 2017
       by Mik (mik@ioteam.it)
 
    This example is in the public domain
@@ -73,7 +73,7 @@ void setup() {
 	fsm = NoCommand;
 	SerialUSB.begin(15200);
 	
-
+  while (!SerialUSB) {;};
 	
 	printHelp();
 	dustManager.begin(false, NULL, PIN_DUST_CTS);
@@ -141,13 +141,54 @@ void loop() {
 
 			case ListOfPath:
 			break;
-			
-			case NetworkConfig:
+
+      case NetworkConfig:
+      /*
+       * 
+       * from dn_ipmg.h
+       * 
+       * typedef struct {
+       * uint8_t    RC;
+       * uint16_t   numMotes;
+       * uint16_t   asnSize;
+       * uint8_t    advertisementState;
+       * uint8_t    downFrameState;
+       * uint8_t    netReliability;
+       * uint8_t    netPathStability;
+       * uint32_t   netLatency;
+       * uint8_t    netState;
+       * uint8_t    ipv6Address[16];
+       * } dn_ipmg_getNetworkInfo_rpt
+       */
 			networkInfo = (const dn_ipmg_getNetworkInfo_rpt*)dustManager.getLastCommand();
+      SerialUSB.println("INFO:");
+      SerialUSB.print("Number of Mote = ");
+      SerialUSB.println(networkInfo->numMotes);
 			break;
 			
 			case ManagerInfo:
+     /*
+      * typedef struct {
+      *    uint8_t    RC;
+      *    uint8_t    macAddress[8];
+      *    uint8_t    hwModel;
+      *    uint8_t    hwRev;
+      *    uint8_t    swMajor;
+      *    uint8_t    swMinor;
+      *    uint8_t    swPatch;
+      *    uint16_t   swBuild;
+      * } dn_ipmg_getSystemInfo_rpt
+      */
 			managerInfo = (dn_ipmg_getSystemInfo_rpt*)dustManager.getLastCommand();
+      SerialUSB.println("INFO:");
+      SerialUSB.print("SW Major = ");
+      SerialUSB.println(managerInfo->swMajor);
+      SerialUSB.print("SW Minor = ");
+      SerialUSB.println(managerInfo->swMinor);
+      SerialUSB.print("SW Patch = ");
+      SerialUSB.println(managerInfo->swPatch);
+      SerialUSB.print("SW Build = ");
+      SerialUSB.println(managerInfo->swBuild);
 			break;
 		}
 		fsm = NoCommand;
@@ -194,4 +235,3 @@ void loop() {
 		}
 	}
 }
-

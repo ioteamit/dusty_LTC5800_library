@@ -16,7 +16,10 @@ ipv6Addr_manager	KEYWORD1
 
 IpMgDataModel	                KEYWORD1
 IpMtDataModel	                KEYWORD1
+dn_ipmg_getNetworkInfo_rpt	KEYWORD1
+dn_ipmg_getSystemInfo_rpt	KEYWORD1
 dn_ipmg_getMoteConfig_rpt	KEYWORD1
+dn_ipmg_getNextPathInfo_rpt	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -35,6 +38,8 @@ dataToSend	        KEYWORD2
 setPriority	        KEYWORD2
 setDatasize	        KEYWORD2
 getLastCommand	        KEYWORD2
+retrieveNetworkInfo	KEYWORD2
+retrieveManagerInfo	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
