@@ -59,6 +59,11 @@ public:
     virtual uint8_t         getDatasize(void)=0;
     virtual void            setDatasize(uint8_t size)=0;
     virtual void            dataToSend(const uint8_t *data, uint8_t dataLen)=0;
+    /**
+     *
+     * Return the pointer to the latest message received and its length
+     *
+     **/
     virtual const uint8_t*  fetchLastMessage(uint8_t* len)=0;
     virtual const uint8_t*  getDataToSend(void)=0;
     virtual uint8_t*        getLastMessage(void)=0;

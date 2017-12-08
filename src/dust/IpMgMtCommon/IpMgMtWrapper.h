@@ -49,9 +49,11 @@
  *  The enumeration that defin ethe status of the command/Data
  * 
  *  The status of the command could be:
- *  CommandSent:   Just send the command
- *  Working:   The command has more than one answer, the received answer is one of the list
- *  Completed: This is the last answer of the command
+ *  Idle 	: Nothing to say	 
+ *  CommandSent : Just send the command
+ *  DataSent	: Just send a stream of data 
+ *  Working	: The command has more than one answer, the received answer is one of the list
+ *  Completed	: This is the last answer of the command
  *  DataReceived:  The received message is for a Mote/Manager.
  */
 typedef enum {

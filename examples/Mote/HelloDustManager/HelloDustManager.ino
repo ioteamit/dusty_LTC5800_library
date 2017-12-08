@@ -1,16 +1,45 @@
 /*
-       SmeIoT Library - HelloDustManager
-
-    This example, togheter with the HelloDustMote in the Manager examples, show the
-    comunication between the Motes and the Manager.
-
-
-   created 08 07 2016
-      by Mik (mik@ioteam.it)
-
-   This example is in the public domain
-       https://bitbucket.org/ioteamit/arduino-dust-library
-*/
+ *      SmeIoT Library - HelloDustManager
+ *
+ *   This example, togheter with the HelloDustMote in the Manager examples, show the
+ *   comunication between the Motes and the Manager.
+ *
+ *
+ *  3 are the main classes that made this possible:
+ *  1) the object dustManager that is the Manager of the network
+ *  2) The object dustMote that is the Mote of the network
+ *  3) The class IpMgDataModel and IpMtDataModel that are the classes used to send/receive data.
+ *  
+ *  Describe here better the mote class and its datamodel
+ *  
+ *  dustMote:
+ *    begin = srcPort = the port for incoming message
+ *            dstPort = the port for the outgoing message
+ *            dataPeriod = the millisecond to wait for the call to the periodic callback that prepare the message to send
+ *            dataToSend = the pointer to the data model prepared by the callback
+ *            polling    = true if we want the automatic periodic message
+ *            statusUpd_cb = the callback that receive the status event of the Mote 
+ *  
+ *    readData = this is the main method used by the manager to move the internal FSM, 
+ *                 it shall be always called because return the latest received DataModel 
+ *                 or the complete of the interanl comand.
+ *                 return status described in IpMgMtWrapper.h file
+ *  
+ *    getLastCommand = return the information of the last command (need to be cast the the command structure defined in dn_ipmt.h) 
+ *                 
+ *    sendData = Send the information contains in the DataModel.
+ *                 
+ *                 
+ *  IpMtDataModel:           
+ *    constructor  = set the callBack that prepare the datamodel for the polling mode
+ *    fetchLastMessage =  Return the pointer to the latest message received and its length.
+ *  
+ *  created 08 07 2016
+ *     by Mik (mik@ioteam.it)
+ *
+ *  This example is in the public domain
+ *      https://github.com/ioteamit/dusty_LTC5800_library
+ */
 
 #include <Arduino.h>
 #include <DustMote.h>
@@ -62,7 +91,6 @@ void setup() {
 
   dustMote.begin(
     60000,                         // srcPort
-    (uint8_t*)ipv6Addr_manager,    // destAddr
     61020,                         // destPort
     500,                           // dataPeriod (ms)
     dataModel,                     // dataGenerator

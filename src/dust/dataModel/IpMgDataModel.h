@@ -42,11 +42,21 @@ private:
 
 public:
     IpMgDataModel(){options=0, priority=0;};
+    /**
+     * 
+     * configure the outgoing an incoming port used by the Mote, identified by its mac.
+     *
+     **/
     IpMgDataModel(const uint8_t *mac, uint16_t srcPort, uint16_t dstPort);
 
 
 
 public:
+    /**
+     * data	: the pointer to the stream of bytes want to send
+     * dataLen	: the Length of the same stream.
+     *
+     **/
     inline void dataToSend(const uint8_t *data, uint8_t dataLen) {
         dn_ipmg_notifData_nt *buf = (dn_ipmg_notifData_nt*)dataBuffer;
         memcpy(buf->data, data, dataLen);
@@ -102,6 +112,10 @@ public:
         options = opt;
     };
 
+    /**
+     * Set the priority of this datamodel
+     *  Used on all its message till next set
+     **/
     inline void setPriority(uint8_t prio) {
         priority = prio;
     };

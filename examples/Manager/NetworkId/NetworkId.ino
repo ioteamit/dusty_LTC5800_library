@@ -9,7 +9,7 @@
       by Mik (mik@ioteam.it)
 
    This example is in the public domain
-       https://bitbucket.org/ioteamit/arduino-dust-library
+      https://github.com/ioteamit/dusty_LTC5800_library
 */
 
 #include <Arduino.h>

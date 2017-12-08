@@ -6,15 +6,17 @@
 # Library (KEYWORD1)
 #######################################
 
-dustMote	     KEYWORD1
-dustManager	     KEYWORD1
+dustMote	        KEYWORD1
+dustManager	        KEYWORD1
+ipv6Addr_manager	KEYWORD1
 
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
 
-IpMgDataModel	     KEYWORD1
-dn_ipmg_getMoteConfig_rpt	     KEYWORD1
+IpMgDataModel	                KEYWORD1
+IpMtDataModel	                KEYWORD1
+dn_ipmg_getMoteConfig_rpt	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -26,11 +28,13 @@ registerMote	        KEYWORD2
 listOfPath	        KEYWORD2
 listOfMac	        KEYWORD2
 getLastMessage	        KEYWORD2
-getDestinationMac	        KEYWORD2
-fetchLastMessage	        KEYWORD2
+getDestinationMac	KEYWORD2
+fetchLastMessage	KEYWORD2
 retrieveTime	        KEYWORD2
 dataToSend	        KEYWORD2
 setPriority	        KEYWORD2
+setDatasize	        KEYWORD2
+getLastCommand	        KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

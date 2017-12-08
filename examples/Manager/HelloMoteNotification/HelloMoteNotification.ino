@@ -4,20 +4,49 @@
 *  This example, togheter with the HelloDustManager in the Mote examples, show the
 *  comunication between the Motes and the Manager.
 *
-*  The mote are no more static but discovered by the manager.
+*  3 are the main classes that made this possible:
+*  1) the object dustManager that is the Manager of the network
+*  2) The object dustMote that is the Mote of the network
+*  3) The class IpMgDataModel and IpMtDataModel that are the classes used to send/receive data.
+*  
+*  Describe here better the manager class and its datamodel
+*  dustManager:
+*     begin = simply set to true the first parameter if want to handle, 
+*              with the ptr function passed as second parameter, 
+*              the events received by the Dusty.               
+*              (other params described in the DustManager.h file)
 *
+*     registerMote = used to register a the dataModel of a specific mote. 
+*                     only the registered mote will be handle.
+*                     
+*     readData = this is the main method used by the manager to move the internal FSM, 
+*                 it shall be always called because return the latest received DataModel 
+*                 or the complete of the interanl comand.
+*                 return status described in IpMgMtWrapper.h file
+*                 
+*     getLastMessage =  Return the pointer to the DataModel of the latest message received.
+*                         The DataModel contains the MacAddress and the stream of data of the mote
+*                         
+*     sendData = Send the information contains in the DataModel.
+*     
+*     
+*     
+*  IpMgDataModel:
+*     constructor = configure the outgoing an incoming port used by the Mote, identified by its mac.
+*     
+*     dataToSend = data : the pointer to the stream of bytes want to send
+*                  dataLen  : the Length of the same stream.
 * created 08 07 2016
-      by Mik (mik@ioteam.it)
-
-   This example is in the public domain
-       https://bitbucket.org/ioteamit/arduino-dust-library
+*     by Mik (mik@ioteam.it)
+*
+*  This example is in the public domain
+*      https://github.com/ioteamit/dusty_LTC5800_library
 */
 #include <Arduino.h>
 #include <DustManager.h>
 uint8_t moteN=0;
 IpMgDataModel *motes[10], *moteAll;
 char brcMac[8]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};    // Broadcast MOTES
-char mac[8]={0x0,0x17,0x0D,0x00,0x00,0x59,0x09,0x61};        // Put here your Mote mac
 
 uint16_t srcPort = 61020;
 uint16_t dstPort = 60000;

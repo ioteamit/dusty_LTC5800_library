@@ -28,10 +28,10 @@
 IpMtWrapper  ipmtwrapper;
 DustMote  dustMote;
 
-void DustMote::begin (uint16_t srcPort, uint8_t* destAddr, uint16_t destPort,
+void DustMote::begin (uint16_t srcPort, uint16_t destPort,
 		TIME_T dataPeriod, IpMtDataModel *dataToSend,
 		boolean polling,  status_update  statusUpd_cb, 
-		char CtsPin, char RtsPin, Uart *serial,
+		uint8_t* destAddr, char CtsPin, char RtsPin, Uart *serial,
 		uint16_t			networkId)
 {	
 	DustMgMt::begin(CtsPin, RtsPin);

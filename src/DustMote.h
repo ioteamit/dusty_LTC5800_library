@@ -52,28 +52,46 @@ private:
 	// library API
 public:
 #ifdef MKR_SAMD_LINEAR
-	void begin (uint16_t srcPort, uint8_t* destAddr, uint16_t destPort,
+	/**
+	 *
+	 * srcPort = the port for incoming message
+	 * dstPort = the port for the outgoing message
+	 * dataPeriod = the millisecond to wait for the call to the periodic callback that prepare the message to send
+	 * dataToSend = the pointer to the data model prepared by the callback
+	 * polling    = true if we want the automatic periodic message
+	 * statusUpd_cb = the callback that receive the status event of the Mote 
+	 * destAddr     = the manager IpV6 addr 
+	 * CtsPin	= the CTS pin of the LTC5800
+	 * RtsPin	= the RTS pin of the LTC5800
+	 * serial	= the Serial used by the Mote (for ARROW and IOTEAM boards it is not needed)
+	 * networkId	= the networkId of the Manager
+	 **/
+	void begin (uint16_t srcPort, uint16_t destPort,
 			TIME_T dataPeriod, IpMtDataModel *dataToSend,
-			boolean polling=true, status_update  statusUpd_cb = NULL,
+			boolean polling=true, status_update  statusUpd_cb = NULL, uint8_t* destAddr = (uint8_t*)ipv6Addr_manager,
 			char CtsPin = PIN_ANTENNA_CTS, char RtsPin = -1,Uart *serial=&serialAntenna,
 			uint16_t			networkId=DEFAULT_NETWORK_ID);
 #elif ARDUINO_IOTEAM_SAMD_DUSTINO
-	void begin (uint16_t srcPort, uint8_t* destAddr, uint16_t destPort,
+	void begin (uint16_t srcPort, uint16_t destPort,
 	TIME_T dataPeriod, IpMtDataModel *dataToSend,
-	boolean polling=true, status_update  statusUpd_cb = NULL,
+	boolean polling=true, status_update  statusUpd_cb = NULL, uint8_t* destAddr = (uint8_t*)ipv6Addr_manager,
 	char CtsPin = PIN_DUST_RTS, char RtsPin = PIN_DUST_CTS,Uart *serial=&SerialDust,
 	uint16_t networkId=DEFAULT_NETWORK_ID);
 #else
 	//by default use one common Arduino PIN
-	void begin (uint16_t srcPort, uint8_t* destAddr, uint16_t destPort,
+	void begin (uint16_t srcPort, uint16_t destPort,
 			TIME_T dataPeriod, IpMtDataModel *dataToSend,
-			boolean polling=true, status_update  statusUpd_cb = NULL,
+			boolean polling=true, status_update  statusUpd_cb = NULL, uint8_t* destAddr = (uint8_t*)ipv6Addr_manager,
 			char CtsPin = PIN_LED, char RtsPin = -1, Uart *serial=&Serial1,
 			uint16_t			networkId=DEFAULT_NETWORK_ID); 
 #endif
 	void start(void);
 	DustCbStatusE readData (void);
 	void sendData (DataModel *sendData=NULL);
+	/**
+	 *  return the information of the last command 
+	 *   (need to be cast the the command structure defined in dn_ipmt.h) 
+	 **/
 	inline const uint8_t* getLastCommand(){return ipmtwrapper.getLastCommand();};
 	void retrieveNetworkId();
 	void retrieveNetworkInfo();

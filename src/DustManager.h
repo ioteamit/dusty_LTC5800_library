@@ -58,6 +58,16 @@ private:
 
 	// User function
 public:
+	/**
+	 * begin
+	 *
+	 * This is the initialization method 
+	 * eventNotification = true if we wnat to trap every manager event
+	 * eventCallBack     = the function that will handle the event if the eventNotification parameter is true
+	 * CtsPin            = the pin that will handle the CTS LTC5800 pin
+	 * RtsPin            = the pin that will handle the RTS LTC5800 pin
+	 * serial            = the pointer to the Serial object used for the internal comunication with the LTC5800 (IOTEAM & ARROW boards do not need this)
+	 **/ 
 #ifdef MKR_SAMD_LINEAR
 	boolean begin (bool eventNotification=false, eventCallBack eventFunct=NULL,
 			char CtsPin = PIN_ANTENNA_CTS, char RtsPin=-1, Uart *serial=&serialAntenna);
@@ -68,12 +78,34 @@ boolean begin (bool eventNotification=false, eventCallBack eventFunct=NULL,
 	boolean begin (bool eventNotification=false, eventCallBack eventFunct=NULL,
 			char CtsPin = PIN_LED, char RtsPin=-1, Uart *serial=&Serial1); //by default use one common Arduino PIN
 #endif
+	/**
+	 * this is the main method used by the manager to move the internal FSM, 
+                  it shall be always called because return the latest received DataModel 
+                  or the complete of the interanl comand
+         *
+         **/
 	DustCbStatusE readData (void);
+
+        /**
+	 *
+	 * Send the information contains in the DataModel
+	 *
+	 **/
 	boolean sendData(DataModel *sendData=NULL);
 	boolean listOfMac(boolean start=TRUE);
 	void listOfPath(char mac[8], char direction=UPSTREAM_PATH);
 	inline const uint8_t* getLastCommand(){return ipmgwrapper.getLastCommand();};
+
+	/**
+	 * used to register a the dataModel of a specific mote. 
+	 *     only the registered mote will be handle.
+         **/
 	boolean registerMote(IpMgDataModel *mote);
+
+	/**
+	 * Return the DataModel of the latest message received
+	 *
+	 **/
 	IpMgDataModel *getLastMessage(void){return lastReceiveMsg;};
 	void retrieveNetworkInfo(void);
 	void retrieveNetworkConfig();

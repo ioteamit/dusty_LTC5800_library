@@ -1,13 +1,14 @@
 /*
       SmeIoT Library - DustySensor.ino
 
-   This example work togher with the SensorMote designed by IOTEAM (www.ioteam.it)
+   This example work togher with the DustySensor designed by IOTEAM (www.ioteam.it)
 
   created 08 07 2017
       by Mik (mik@ioteam.it)
 
    This example is in the public domain
-       https://bitbucket.org/ioteamit/arduino-dust-library
+ *      https://github.com/ioteamit/dusty_LTC5800_library
+
 */
 #include <Arduino.h>
 #include <DustManager.h>
